@@ -14,5 +14,7 @@ import com.simba.model.Product;
 public interface ProductDao {
 	List<Product> findAll();
 	
-	int saveOrUpdate(Product product);
+	int save(Product product);
+	
+	int saveList(List<Product> products);
 }

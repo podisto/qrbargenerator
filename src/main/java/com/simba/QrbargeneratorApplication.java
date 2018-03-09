@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
 import com.google.zxing.BarcodeFormat;
@@ -16,9 +18,12 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.simba.model.Product;
-import com.simba.service.ProductService;
+import com.simba.service.impl.ProductServiceData;
+import com.simba.utils.StorageProperties;
 
 @SpringBootApplication
+@EnableConfigurationProperties(StorageProperties.class)
+@ComponentScan(basePackages = "com.simba")
 @PropertySource("classpath:application.properties")
 public class QrbargeneratorApplication {
 
@@ -27,7 +32,7 @@ public class QrbargeneratorApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(QrbargeneratorApplication.class, args);
 		List<Product> products = new ArrayList<>();
-		ProductService pService = new ProductService();
+		ProductServiceData pService = new ProductServiceData();
 		products = pService.init();
 		System.out.println(products);
 		try {
