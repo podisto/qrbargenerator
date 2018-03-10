@@ -85,6 +85,9 @@ public class ProductServiceImpl implements ProductService {
 			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
 				Product product = new Product();
 				row = sheet.getRow(i);
+				if (row.getRowNum() == 0)
+					continue; // skip first row, as it contains column names.
+				
 				String batiment = (row.getCell(0) != null && row.getCell(0).getCellTypeEnum() != CellType.BLANK ? new DataFormatter().formatCellValue(row.getCell(0)) : "");
 				String bureau = (row.getCell(1) != null && row.getCell(1).getCellTypeEnum() != CellType.BLANK ? new DataFormatter().formatCellValue(row.getCell(1)) : "");
 				String ordre = (row.getCell(2) != null && row.getCell(2).getCellTypeEnum() != CellType.BLANK ? new DataFormatter().formatCellValue(row.getCell(2)) : "");
