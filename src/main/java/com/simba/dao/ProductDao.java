@@ -17,4 +17,6 @@ public interface ProductDao {
 	int save(Product product);
 	
 	int saveList(List<Product> products);
+	
+	List<Product> getProducts(int begin, int end);
 }

@@ -4,6 +4,9 @@
 package com.simba.service.impl;
 
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +22,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.simba.dao.ProductDao;
 import com.simba.model.Product;
 import com.simba.service.ProductService;
@@ -87,15 +95,31 @@ public class ProductServiceImpl implements ProductService {
 				row = sheet.getRow(i);
 				if (row.getRowNum() == 0)
 					continue; // skip first row, as it contains column names.
-				
-				String batiment = (row.getCell(0) != null && row.getCell(0).getCellTypeEnum() != CellType.BLANK ? new DataFormatter().formatCellValue(row.getCell(0)) : "");
-				String bureau = (row.getCell(1) != null && row.getCell(1).getCellTypeEnum() != CellType.BLANK ? new DataFormatter().formatCellValue(row.getCell(1)) : "");
-				String ordre = (row.getCell(2) != null && row.getCell(2).getCellTypeEnum() != CellType.BLANK ? new DataFormatter().formatCellValue(row.getCell(2)) : "");
-				String designation = (row.getCell(3) != null && row.getCell(3).getCellTypeEnum() != CellType.BLANK ? new DataFormatter().formatCellValue(row.getCell(3)) : "");
-				String marque = (row.getCell(4) != null && row.getCell(4).getCellTypeEnum() != CellType.BLANK ? new DataFormatter().formatCellValue(row.getCell(4)) : "");
-				String modele = (row.getCell(5) != null && row.getCell(5).getCellTypeEnum() != CellType.BLANK ? new DataFormatter().formatCellValue(row.getCell(5)) : "");
-				String numserie = (row.getCell(6) != null && row.getCell(6).getCellTypeEnum() != CellType.BLANK ? new DataFormatter().formatCellValue(row.getCell(6)) : "");
-				String famille = (row.getCell(7) != null && row.getCell(7).getCellTypeEnum() != CellType.BLANK ? new DataFormatter().formatCellValue(row.getCell(7)) : "");
+
+				String batiment = (row.getCell(0) != null && row.getCell(0).getCellTypeEnum() != CellType.BLANK
+						? new DataFormatter().formatCellValue(row.getCell(0))
+						: "");
+				String bureau = (row.getCell(1) != null && row.getCell(1).getCellTypeEnum() != CellType.BLANK
+						? new DataFormatter().formatCellValue(row.getCell(1))
+						: "");
+				String ordre = (row.getCell(2) != null && row.getCell(2).getCellTypeEnum() != CellType.BLANK
+						? new DataFormatter().formatCellValue(row.getCell(2))
+						: "");
+				String designation = (row.getCell(3) != null && row.getCell(3).getCellTypeEnum() != CellType.BLANK
+						? new DataFormatter().formatCellValue(row.getCell(3))
+						: "");
+				String marque = (row.getCell(4) != null && row.getCell(4).getCellTypeEnum() != CellType.BLANK
+						? new DataFormatter().formatCellValue(row.getCell(4))
+						: "");
+				String modele = (row.getCell(5) != null && row.getCell(5).getCellTypeEnum() != CellType.BLANK
+						? new DataFormatter().formatCellValue(row.getCell(5))
+						: "");
+				String numserie = (row.getCell(6) != null && row.getCell(6).getCellTypeEnum() != CellType.BLANK
+						? new DataFormatter().formatCellValue(row.getCell(6))
+						: "");
+				String famille = (row.getCell(7) != null && row.getCell(7).getCellTypeEnum() != CellType.BLANK
+						? new DataFormatter().formatCellValue(row.getCell(7))
+						: "");
 				product.setBatiment(batiment);
 				product.setBureau(bureau);
 				product.setOrdre(ordre);
@@ -105,8 +129,10 @@ public class ProductServiceImpl implements ProductService {
 				product.setNumeroSerie(numserie);
 				product.setFamille(famille);
 				// code technique => BATIMENT/BUREAU/FAMILLE/ORDRE
-				product.setCodeTechnique(product.getBatiment()+"/"+product.getBureau()+"/"+product.getFamille()+"/"+product.getOrdre());
-				product.setQrcode(product.getDesignation()+" " +product.getMarque()+ " " +product.getModele()+ " " +product.getNumeroSerie());
+				product.setCodeTechnique(product.getBatiment() + "/" + product.getBureau() + "/" + product.getFamille()
+						+ "/" + product.getOrdre());
+				product.setQrcode(product.getDesignation() + " " + product.getMarque() + " " + product.getModele() + " "
+						+ product.getNumeroSerie());
 				listProducts.add(product);
 			}
 			resultMap.put("products", listProducts);
@@ -116,6 +142,23 @@ public class ProductServiceImpl implements ProductService {
 			e.printStackTrace();
 		}
 		return resultMap;
+	}
+
+	@Override
+	public void generateQRCodeImage(String text, int width, int height, String filePath)
+			throws WriterException, IOException {
+		// TODO Auto-generated method stub
+		QRCodeWriter qrCodeWriter = new QRCodeWriter();
+		BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+
+		Path path = FileSystems.getDefault().getPath(filePath);
+		MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+	}
+
+	@Override
+	public List<Product> getProducts(int begin, int end) {
+		// TODO Auto-generated method stub
+		return productDao.getProducts(begin, end);
 	}
 
 }

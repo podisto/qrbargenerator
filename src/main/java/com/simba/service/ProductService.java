@@ -3,9 +3,11 @@
  */
 package com.simba.service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.zxing.WriterException;
 import com.simba.model.Product;
 
 /**
@@ -20,4 +22,8 @@ List<Product> findAll();
 	int saveList(List<Product> products);
 	
 	HashMap<String, Object> loadExcelData(String filename);
+	
+	void generateQRCodeImage(String text, int width, int height, String filePath) throws WriterException, IOException;
+	
+	List<Product> getProducts(int begin, int end);
 }

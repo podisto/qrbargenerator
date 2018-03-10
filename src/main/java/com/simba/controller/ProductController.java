@@ -55,7 +55,12 @@ public class ProductController {
 
 	}
 	
-	@RequestMapping(value = "/products/list", method = RequestMethod.POST)
+	@RequestMapping(value = "/products/list", params = { "begin", "end" }, method = RequestMethod.GET)
+	public List<Product> getProducts(@RequestParam("begin") int begin, @RequestParam("end") int end) {
+		return productSrv.getProducts(begin, end);
+	}
+	
+	@RequestMapping(value = "/products/save", method = RequestMethod.POST)
 	public @ResponseBody JsonResponse insertListProducts(@RequestBody List<Product> products) {
 		int count = productSrv.saveList(products);
 

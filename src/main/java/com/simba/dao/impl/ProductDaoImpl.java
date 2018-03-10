@@ -30,6 +30,9 @@ public class ProductDaoImpl implements ProductDao {
 	public static final String QR_INSERT = "INSERT INTO qr_produit(qrpr_designation, qrpr_marque, qrpr_modele, qrpr_numserie, qrpr_codetechnique, "
 			+ "qrpr_qrcode) VALUES (:designation, :marque, :modele, :numserie, :codetechnique, :qrcode)";
 	
+	public static final String QR_PRODUCTS = "SELECT qrpr_id, qrpr_designation, qrpr_marque, qrpr_modele, qrpr_numserie, qrpr_codetechnique, qrpr_qrcode "
+			+ "FROM qr_produit ORDER BY qrpr_id ASC LIMIT :begin OFFSET :end";
+	
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameter;
 
@@ -71,7 +74,7 @@ public class ProductDaoImpl implements ProductDao {
 			product.setModele(rs.getString("qrpr_modele"));
 			product.setNumeroSerie(rs.getString("qrpr_numserie"));
 			product.setCodeTechnique(rs.getString("qrpr_codetechnique"));
-			product.setQrcode(rs.getString("qrpr_qrstring"));
+			product.setQrcode(rs.getString("qrpr_qrcode"));
 			return product;
 		}
 		
@@ -96,6 +99,14 @@ public class ProductDaoImpl implements ProductDao {
 		}
 		System.out.println("List Produits => " +products.size()+ "Count List => " +countList.size());
 		return countList.size();
+	}
+
+	@Override
+	public List<Product> getProducts(int begin, int end) {
+		HashMap<String, Object> params = new HashMap<>();
+		params.put("begin", begin);
+		params.put("end", end);
+		return namedParameter.query(QR_PRODUCTS, params, new ProductRowMapper());
 	}
 
 }
