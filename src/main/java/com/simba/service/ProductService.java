@@ -25,5 +25,7 @@ List<Product> findAll();
 	
 	void generateQRCodeImage(String text, int width, int height, String filePath) throws WriterException, IOException;
 	
+	void generateQRCode(final String path, int begin, int end);
+	
 	List<Product> getProducts(int begin, int end);
 }

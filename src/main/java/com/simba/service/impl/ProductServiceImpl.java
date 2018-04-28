@@ -161,4 +161,25 @@ public class ProductServiceImpl implements ProductService {
 		return productDao.getProducts(begin, end);
 	}
 
+	@Override
+	public void generateQRCode(final String path, int begin, int end) {
+		// TODO Auto-generated method stub
+		List<Product> products = this.getProducts(begin, end);
+		System.out.println("products => " + products);
+		try {
+			for (Product item : products) {
+				String marque = item.getMarque() == null ? "" : item.getMarque();
+				String modele = item.getModele() == null ? "" : item.getModele();
+				String numSerie = item.getNumeroSerie() == null ? "" : item.getNumeroSerie();
+				String qrString = item.getDesignation() + " " + marque + " " + modele + " " + numSerie;
+				generateQRCodeImage(qrString, 794, 265, path + item.getCodeTechnique().replace("/", "_") + ".png");
+				System.out.println("success");
+			}
+		} catch (WriterException e) {
+			System.out.println("Could not generate QR Code, WriterException :: " + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("Could not generate QR Code, IOException :: " + e.getMessage());
+		}
+	}
+
 }

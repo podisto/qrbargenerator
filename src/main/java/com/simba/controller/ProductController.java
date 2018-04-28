@@ -31,6 +31,8 @@ import com.simba.service.StorageService;
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProductController {
 
+	private static final String QR_CODE_IMAGE_PATH = "./codes/";
+	
 	@Autowired
 	private StorageService storageService;
 
@@ -65,5 +67,11 @@ public class ProductController {
 		int count = productSrv.saveList(products);
 
 		return new JsonResponse(HttpStatus.OK.value(), count + "produits insérés ", products);
+	}
+	
+	@RequestMapping(value = "/products/generate", params = { "begin", "end" }, method = RequestMethod.GET)
+	public @ResponseBody JsonResponse generateCodeQR(final String path, @RequestParam("begin") int begin, @RequestParam("end") int end) {
+		productSrv.generateQRCode(QR_CODE_IMAGE_PATH, begin, end);
+		return new JsonResponse(HttpStatus.OK.value(), "Code QR generated with successfully", null);
 	}
 }
